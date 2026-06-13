@@ -1,15 +1,9 @@
 import { useState, useCallback } from "react";
-import {
-  doc,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useAuthStore } from "@/store/authStore";
 import { InterviewSession, Answer, SessionFeedback } from "@/types/interview";
-import { Question } from "@/types/question";
 import { generateSessionId } from "@/lib/utils";
 import { QUESTION_TIME_LIMIT } from "@/lib/constants";
 
@@ -24,7 +18,6 @@ export const useInterview = () => {
     error,
     timeRemaining,
     setSession,
-    setCurrentQuestion,
     nextQuestion,
     setRecording,
     setAISpeaking,
@@ -36,13 +29,16 @@ export const useInterview = () => {
 
   const startSession = useCallback(
     async (subject: string, difficulty: "easy" | "medium" | "hard") => {
-      if (!user) return;
+      if (!user) {
+        console.error("No user found");
+        return null;
+      }
 
       try {
         setLoading(true);
         setError(null);
 
-        const sessionId = generateSessionId();
+        console.log("Starting session for:", subject, difficulty);
 
         // Fetch questions from backend
         const response = await fetch(
@@ -50,11 +46,30 @@ export const useInterview = () => {
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ subject, difficulty, count: 10 }),
+            body: JSON.stringify({
+              subject,
+              difficulty,
+              count: 5,
+            }),
           }
         );
 
-        const { questions } = await response.json();
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          throw new Error(`Backend error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Questions received:", data);
+
+        const questions = data.questions || [];
+
+        if (questions.length === 0) {
+          throw new Error("No questions received");
+        }
+
+        const sessionId = generateSessionId();
 
         const newSession: InterviewSession = {
           id: sessionId,
@@ -79,10 +94,13 @@ export const useInterview = () => {
         setSession(newSession);
         setLoading(false);
 
+        console.log("Session created:", sessionId);
         return sessionId;
       } catch (err: any) {
+        console.error("Start session error:", err);
         setError(err.message);
         setLoading(false);
+        return null;
       }
     },
     [user]
@@ -90,15 +108,13 @@ export const useInterview = () => {
 
   const submitAnswer = useCallback(
     async (answerText: string, audioBlob?: Blob) => {
-      if (!session || !user) return;
+      if (!session || !user) return null;
 
       try {
         setLoading(true);
 
-        const currentQuestion =
-          session.questions[currentQuestionIndex];
+        const currentQuestion = session.questions[currentQuestionIndex];
 
-        // Get AI feedback
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/interview/feedback`,
           {
@@ -131,32 +147,29 @@ export const useInterview = () => {
         };
 
         setSession(updatedSession);
-
-        // Update Firestore
-        await updateDoc(doc(db, "sessions", session.id), {
-          answers: updatedSession.answers,
-          feedback: updatedSession.feedback,
-        });
-
         setLoading(false);
         nextQuestion();
 
         return feedback;
       } catch (err: any) {
+        console.error("Submit answer error:", err);
         setError(err.message);
         setLoading(false);
+        return null;
       }
     },
     [session, currentQuestionIndex, timeRemaining, user]
   );
 
   const completeSession = useCallback(async () => {
-    if (!session) return;
+    if (!session) return null;
 
     try {
       const totalScore =
-        session.feedback.reduce((sum, f) => sum + f.score, 0) /
-        session.feedback.length;
+        session.feedback.length > 0
+          ? session.feedback.reduce((sum, f) => sum + f.score, 0) /
+            session.feedback.length
+          : 0;
 
       const updatedSession: InterviewSession = {
         ...session,
@@ -166,16 +179,10 @@ export const useInterview = () => {
       };
 
       setSession(updatedSession);
-
-      await updateDoc(doc(db, "sessions", session.id), {
-        status: "completed",
-        score: totalScore,
-        completedAt: serverTimestamp(),
-      });
-
       return updatedSession;
     } catch (err: any) {
       setError(err.message);
+      return null;
     }
   }, [session]);
 

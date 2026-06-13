@@ -36,11 +36,13 @@ export default function InterviewPage() {
     }
   }, [currentQuestionIndex, session]);
 
-  const handleSubmit = async (answer: string, audioBlob?: Blob) => {
+  const handleSubmit = async (
+    answer: string,
+    audioBlob?: Blob
+  ) => {
     setIsAIThinking(true);
     const feedback = await submitAnswer(answer, audioBlob);
     setIsAIThinking(false);
-
     if (feedback) {
       setScores((prev) => [...prev, feedback.score]);
       setCurrentScore(feedback.score);
@@ -60,7 +62,7 @@ export default function InterviewPage() {
     return (
       <div className="flex items-center justify-center h-96">
         <div
-          className="w-8 h-8 border-2 border-violet-500
+          className="w-8 h-8 border-2 border-green-500
           border-t-transparent rounded-full animate-spin"
         />
       </div>
@@ -110,37 +112,30 @@ export default function InterviewPage() {
           />
         </div>
 
-        {/* Right — AI Interviewer */}
-        <div className="flex flex-col items-center justify-start pt-8">
+        {/* Right — AI */}
+        <div className="flex flex-col items-center pt-8">
           <AIAvatar
             isSpeaking={isAISpeaking}
             isThinking={isAIThinking}
           />
-
-          {/* AI Message */}
           <motion.div
             className="mt-6 glass p-4 rounded-2xl w-full"
-            animate={isAISpeaking ? { borderColor: "rgba(139,92,246,0.5)" } : {}}
           >
-            <p className="text-white/60 text-sm text-center leading-relaxed">
+            <p className="text-white/60 text-sm text-center">
               {isAIThinking
                 ? "Analyzing your answer..."
                 : isAISpeaking
-                ? "Great answer! Let me give you feedback..."
-                : currentQuestion
-                ? "Please answer the question to the best of your ability."
-                : "Loading next question..."}
+                ? "Great! Let me give you feedback..."
+                : "Please answer the question."}
             </p>
           </motion.div>
-
-          {/* End Interview */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleComplete}
             className="mt-4 w-full py-3 rounded-xl
               border border-red-500/30 text-red-400
-              hover:bg-red-500/10 transition-all text-sm font-medium"
+              hover:bg-red-500/10 transition-all text-sm"
           >
             End Interview
           </motion.button>

@@ -9,7 +9,14 @@ interface Node {
   vy: number;
   radius: number;
   opacity: number;
+  color: string;
 }
+
+const NODE_COLORS = [
+  "16, 185, 129",
+  "245, 158, 11",
+  "239, 68, 68",
+];
 
 export const NeuralNetwork = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -20,7 +27,6 @@ export const NeuralNetwork = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -31,28 +37,33 @@ export const NeuralNetwork = () => {
     };
 
     const initNodes = () => {
-      const count = Math.floor((canvas.width * canvas.height) / 15000);
+      // More nodes for better visibility
+      const count = Math.floor(
+        (canvas.width * canvas.height) / 8000
+      );
       nodesRef.current = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.3,
         vy: (Math.random() - 0.5) * 0.3,
-        radius: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.2,
+        radius: Math.random() * 2.5 + 1,
+        opacity: Math.random() * 0.6 + 0.3,
+        color:
+          NODE_COLORS[
+            Math.floor(Math.random() * NODE_COLORS.length)
+          ],
       }));
     };
 
-    const drawNodes = () => {
+    const draw = () => {
       if (!ctx || !canvas) return;
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const nodes = nodesRef.current;
       const mouse = mouseRef.current;
-      const connectionDistance = 150;
+      const connectionDistance = 180;
       const mouseDistance = 200;
 
-      // Update positions
       nodes.forEach((node) => {
         node.x += node.vx;
         node.y += node.vy;
@@ -60,26 +71,26 @@ export const NeuralNetwork = () => {
         if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
         if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
 
-        // Mouse interaction
         const dx = mouse.x - node.x;
         const dy = mouse.y - node.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < mouseDistance) {
+        if (dist < mouseDistance && dist > 0) {
           const force = (mouseDistance - dist) / mouseDistance;
-          node.vx -= (dx / dist) * force * 0.02;
-          node.vy -= (dy / dist) * force * 0.02;
+          node.vx -= (dx / dist) * force * 0.01;
+          node.vy -= (dy / dist) * force * 0.01;
         }
 
-        // Speed limit
-        const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
-        if (speed > 1.5) {
-          node.vx = (node.vx / speed) * 1.5;
-          node.vy = (node.vy / speed) * 1.5;
+        const speed = Math.sqrt(
+          node.vx * node.vx + node.vy * node.vy
+        );
+        if (speed > 1.2) {
+          node.vx = (node.vx / speed) * 1.2;
+          node.vy = (node.vy / speed) * 1.2;
         }
       });
 
-      // Draw connections
+      // Draw connections — more visible
       nodes.forEach((nodeA, i) => {
         nodes.slice(i + 1).forEach((nodeB) => {
           const dx = nodeA.x - nodeB.x;
@@ -87,48 +98,70 @@ export const NeuralNetwork = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < connectionDistance) {
-            const opacity = (1 - dist / connectionDistance) * 0.15;
+            const opacity =
+              (1 - dist / connectionDistance) * 0.35;
 
+            // Gradient line
             const gradient = ctx.createLinearGradient(
-              nodeA.x, nodeA.y, nodeB.x, nodeB.y
+              nodeA.x, nodeA.y,
+              nodeB.x, nodeB.y
             );
-            gradient.addColorStop(0, `rgba(139, 92, 246, ${opacity})`);
-            gradient.addColorStop(0.5, `rgba(59, 130, 246, ${opacity})`);
-            gradient.addColorStop(1, `rgba(6, 182, 212, ${opacity})`);
+            gradient.addColorStop(
+              0,
+              `rgba(${nodeA.color}, ${opacity})`
+            );
+            gradient.addColorStop(
+              1,
+              `rgba(${nodeB.color}, ${opacity})`
+            );
 
             ctx.beginPath();
             ctx.moveTo(nodeA.x, nodeA.y);
             ctx.lineTo(nodeB.x, nodeB.y);
             ctx.strokeStyle = gradient;
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         });
       });
 
-      // Draw nodes
+      // Draw nodes with glow
       nodes.forEach((node) => {
         // Outer glow
         const gradient = ctx.createRadialGradient(
           node.x, node.y, 0,
           node.x, node.y, node.radius * 4
         );
-        gradient.addColorStop(0, `rgba(139, 92, 246, ${node.opacity})`);
-        gradient.addColorStop(1, "rgba(139, 92, 246, 0)");
+        gradient.addColorStop(
+          0,
+          `rgba(${node.color}, ${node.opacity})`
+        );
+        gradient.addColorStop(
+          1,
+          `rgba(${node.color}, 0)`
+        );
 
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius * 4, 0, Math.PI * 2);
+        ctx.arc(
+          node.x, node.y,
+          node.radius * 4,
+          0, Math.PI * 2
+        );
         ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Core
+        // Core dot
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139, 92, 246, ${node.opacity + 0.3})`;
+        ctx.arc(
+          node.x, node.y,
+          node.radius,
+          0, Math.PI * 2
+        );
+        ctx.fillStyle = `rgba(${node.color}, ${node.opacity})`;
         ctx.fill();
       });
 
-      animationRef.current = requestAnimationFrame(drawNodes);
+      animationRef.current = requestAnimationFrame(draw);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -137,9 +170,8 @@ export const NeuralNetwork = () => {
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", resize);
-
     resize();
-    drawNodes();
+    draw();
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -154,7 +186,7 @@ export const NeuralNetwork = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 1 }}
     />
   );
 };

@@ -2,274 +2,298 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Play, Sparkles, Users, Star, Zap } from "lucide-react";
-import { GradientButton } from "@/components/shared/GradientButton";
-import { GlassCard } from "@/components/shared/GlassCard";
+import {
+  ArrowRight,
+  Play,
+  CheckCircle,
+  Users,
+  Star,
+  Zap,
+  TrendingUp,
+} from "lucide-react";
 
-const floatingCards = [
-  {
-    id: 1,
-    icon: "🎯",
-    title: "Score: 94%",
-    subtitle: "React Interview",
-    color: "#8b5cf6",
-    position: "top-20 -left-4 md:left-8",
-  },
-  {
-    id: 2,
-    icon: "🧠",
-    title: "AI Feedback",
-    subtitle: "Instant Analysis",
-    color: "#06b6d4",
-    position: "top-40 -right-4 md:right-8",
-  },
-  {
-    id: 3,
-    icon: "📈",
-    title: "+45% Improved",
-    subtitle: "This Week",
-    color: "#10b981",
-    position: "bottom-32 -left-4 md:left-16",
-  },
-  {
-    id: 4,
-    icon: "🏆",
-    title: "Top 10%",
-    subtitle: "Global Ranking",
-    color: "#f59e0b",
-    position: "bottom-20 -right-4 md:right-16",
-  },
+const trustPoints = [
+  "No credit card required",
+  "Free to get started",
+  "AI-powered feedback",
 ];
 
 const stats = [
-  { value: "50K+", label: "Users", icon: Users },
+  { value: "50K+", label: "Professionals", icon: Users },
   { value: "4.9★", label: "Rating", icon: Star },
-  { value: "92%", label: "Success", icon: Zap },
+  { value: "92%", label: "Success Rate", icon: TrendingUp },
 ];
 
 export const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24">
       <div className="max-w-7xl mx-auto px-6 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left Content */}
-          <div className="relative z-10">
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mb-6"
-            >
-              <div
-                className="inline-flex items-center gap-2 px-4 py-2
-                rounded-full border border-violet-500/30
-                bg-violet-500/10 backdrop-blur-sm"
-              >
-                <Sparkles className="w-4 h-4 text-violet-400" />
-                <span className="text-violet-300 text-sm font-medium">
-                  Powered by Claude AI & Whisper
-                </span>
-              </div>
-            </motion.div>
+        <div className="max-w-4xl mx-auto text-center">
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="hero-heading mb-6"
-            >
-              <span className="text-white">Master</span>
-              <br />
-              <span className="gradient-text">Interviews</span>
-              <br />
-              <span className="text-white">With AI</span>
-            </motion.h1>
-
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="body-text mb-8 max-w-lg"
-            >
-              Practice real interviews. Receive instant AI feedback.
-              Track your progress. Get hired faster.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex flex-wrap items-center gap-4 mb-12"
-            >
-              <Link href="/signup">
-                <GradientButton size="lg">
-                  <Zap className="w-5 h-5" />
-                  Start Interview Free
-                  <ArrowRight className="w-5 h-5" />
-                </GradientButton>
-              </Link>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-3 px-6 py-4
-                  rounded-xl border border-white/10
-                  bg-white/5 backdrop-blur-sm
-                  text-white font-semibold
-                  hover:bg-white/10 transition-all"
-              >
-                <div
-                  className="w-8 h-8 rounded-full
-                  bg-gradient-to-r from-violet-500 to-blue-500
-                  flex items-center justify-center"
-                >
-                  <Play className="w-3 h-3 text-white ml-0.5" />
-                </div>
-                Watch Demo
-              </motion.button>
-            </motion.div>
-
-            {/* Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex items-center gap-8"
-            >
-              {stats.map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className="flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-violet-400" />
-                    <div>
-                      <p className="text-white font-bold text-lg leading-none">
-                        {stat.value}
-                      </p>
-                      <p className="text-white/40 text-xs">{stat.label}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </motion.div>
-          </div>
-
-          {/* Right — AI Brain Visual */}
+          {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative hidden lg:flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
           >
-            {/* Central Brain */}
-            <div className="relative w-80 h-80">
-              {/* Rotating Rings */}
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="absolute inset-0 rounded-full border border-violet-500/20"
-                  style={{ inset: `${i * 20}px` }}
-                  animate={{ rotate: i % 2 === 0 ? 360 : -360 }}
-                  transition={{
-                    duration: 10 + i * 5,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                >
-                  <div
-                    className="absolute top-0 left-1/2 w-3 h-3
-                    rounded-full -translate-x-1/2 -translate-y-1/2"
-                    style={{
-                      background: `rgba(${
-                        i === 0
-                          ? "139,92,246"
-                          : i === 1
-                          ? "59,130,246"
-                          : "6,182,212"
-                      }, 0.8)`,
-                      boxShadow: `0 0 10px rgba(${
-                        i === 0
-                          ? "139,92,246"
-                          : i === 1
-                          ? "59,130,246"
-                          : "6,182,212"
-                      }, 0.8)`,
-                    }}
-                  />
-                </motion.div>
-              ))}
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2
+              rounded-full text-sm font-medium"
+              style={{
+                background: "rgba(99,102,241,0.1)",
+                border: "1px solid rgba(99,102,241,0.2)",
+                color: "#a5b4fc",
+              }}
+            >
+              <Zap className="w-3.5 h-3.5" />
+              AI-Powered Interview Preparation Platform
+            </div>
+          </motion.div>
 
-              {/* Center Glow */}
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="hero-heading mb-6"
+          >
+            <span className="text-white">Land Your</span>
+            <br />
+            <span className="gradient-text">Dream Job</span>
+            <br />
+            <span className="text-white">Faster</span>
+          </motion.h1>
+
+          {/* Subheadline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg text-gray-400 mb-8 max-w-2xl
+            mx-auto leading-relaxed"
+          >
+            Practice with AI interviewers that think like real
+            hiring managers. Get instant feedback, track your
+            progress, and walk into every interview with confidence.
+          </motion.p>
+
+          {/* Trust Points */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-wrap items-center justify-center
+            gap-4 mb-10"
+          >
+            {trustPoints.map((point) => (
               <div
-                className="absolute inset-0 rounded-full"
+                key={point}
+                className="flex items-center gap-2 text-sm text-gray-400"
+              >
+                <CheckCircle className="w-4 h-4 text-indigo-400" />
+                {point}
+              </div>
+            ))}
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-wrap items-center
+            justify-center gap-4 mb-16"
+          >
+            <Link href="/signup">
+              <motion.button
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-2 px-8 py-4
+                  rounded-xl font-semibold text-white
+                  transition-all duration-300"
                 style={{
                   background:
-                    "radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%)",
-                }}
-              />
-
-              {/* Brain Emoji */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    filter: [
-                      "drop-shadow(0 0 20px rgba(139,92,246,0.5))",
-                      "drop-shadow(0 0 40px rgba(139,92,246,0.8))",
-                      "drop-shadow(0 0 20px rgba(139,92,246,0.5))",
-                    ],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="text-8xl"
-                >
-                  🧠
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Floating Cards */}
-            {floatingCards.map((card, i) => (
-              <motion.div
-                key={card.id}
-                className={`absolute ${card.position}`}
-                animate={{ y: [0, -10, 0] }}
-                transition={{
-                  duration: 3 + i,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.5,
+                    "linear-gradient(135deg, #6366f1, #3b82f6)",
+                  boxShadow:
+                    "0 8px 30px rgba(99,102,241,0.3)",
                 }}
               >
-                <GlassCard className="p-3 flex items-center gap-3 min-w-max">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-lg"
-                    style={{
-                      background: `${card.color}20`,
-                      border: `1px solid ${card.color}30`,
-                    }}
-                  >
-                    {card.icon}
-                  </div>
-                  <div>
-                    <p className="text-white text-sm font-bold leading-none">
-                      {card.title}
-                    </p>
-                    <p className="text-white/40 text-xs mt-0.5">
-                      {card.subtitle}
-                    </p>
-                  </div>
-                </GlassCard>
-              </motion.div>
+                Start Practicing Free
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 px-8 py-4
+                rounded-xl font-semibold transition-all"
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                color: "#e5e7eb",
+              }}
+            >
+              <div
+                className="w-7 h-7 rounded-full flex items-center
+                justify-center"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #6366f1, #3b82f6)",
+                }}
+              >
+                <Play className="w-3 h-3 text-white ml-0.5" />
+              </div>
+              Watch Demo
+            </motion.button>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex items-center justify-center gap-12"
+          >
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-2xl font-bold text-white mb-1">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-gray-500">{stat.label}</p>
+              </div>
             ))}
           </motion.div>
         </div>
+
+        {/* Dashboard Preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-20 relative max-w-5xl mx-auto"
+        >
+          {/* Glow behind preview */}
+          <div
+            className="absolute inset-0 rounded-2xl"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15), transparent 70%)",
+              filter: "blur(40px)",
+              transform: "translateY(-20px)",
+            }}
+          />
+
+          {/* Mock Dashboard Preview */}
+          <div
+            className="relative rounded-2xl overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.02)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              boxShadow: "0 40px 80px rgba(0,0,0,0.4)",
+            }}
+          >
+            {/* Browser Bar */}
+            <div
+              className="flex items-center gap-2 px-4 py-3"
+              style={{
+                background: "rgba(255,255,255,0.03)",
+                borderBottom: "1px solid rgba(255,255,255,0.05)",
+              }}
+            >
+              <div className="flex gap-1.5">
+                {["#ef4444", "#f59e0b", "#10b981"].map((c) => (
+                  <div
+                    key={c}
+                    className="w-3 h-3 rounded-full"
+                    style={{ background: c, opacity: 0.7 }}
+                  />
+                ))}
+              </div>
+              <div
+                className="flex-1 mx-4 h-6 rounded-lg"
+                style={{ background: "rgba(255,255,255,0.05)" }}
+              />
+            </div>
+
+            {/* Dashboard Content Preview */}
+            <div className="p-6 grid grid-cols-4 gap-4">
+              {/* Stat Cards */}
+              {[
+                { label: "Interviews", value: "24", color: "#6366f1" },
+                { label: "Avg Score", value: "87%", color: "#3b82f6" },
+                { label: "Hours", value: "12h", color: "#06b6d4" },
+                { label: "Streak", value: "7d", color: "#10b981" },
+              ].map((card) => (
+                <div
+                  key={card.label}
+                  className="p-4 rounded-xl"
+                  style={{
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                  }}
+                >
+                  <p
+                    className="text-xl font-bold"
+                    style={{ color: card.color }}
+                  >
+                    {card.value}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {card.label}
+                  </p>
+                </div>
+              ))}
+
+              {/* Chart Placeholder */}
+              <div
+                className="col-span-3 rounded-xl p-4 h-32"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.04)",
+                }}
+              >
+                <p className="text-xs text-gray-600 mb-3">
+                  Performance Trend
+                </p>
+                <div className="flex items-end gap-1 h-16">
+                  {[40, 55, 48, 70, 65, 80, 87].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-sm"
+                      style={{
+                        height: `${h}%`,
+                        background:
+                          "linear-gradient(180deg, #6366f1, #3b82f6)",
+                        opacity: 0.6,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Side Panel */}
+              <div
+                className="rounded-xl p-4 h-32"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.04)",
+                }}
+              >
+                <p className="text-xs text-gray-600 mb-2">
+                  Top Subject
+                </p>
+                <p className="text-sm font-bold text-indigo-400">
+                  React
+                </p>
+                <p className="text-xs text-gray-600 mt-1">
+                  Score: 92%
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

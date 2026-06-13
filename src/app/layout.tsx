@@ -37,7 +37,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="animated-gradient noise min-h-screen antialiased">
+      <body
+        className="min-h-screen antialiased"
+        style={{ background: "#0d2318" }}
+      >
         {children}
       </body>
     </html>
