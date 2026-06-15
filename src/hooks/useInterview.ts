@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useInterviewStore } from "@/store/interviewStore";
 import { useAuthStore } from "@/store/authStore";
-import { InterviewSession, Answer, SessionFeedback } from "@/types/interview";
+import { Answer, SessionFeedback } from "@/types/interview";
 import { generateSessionId } from "@/lib/utils";
 import { QUESTION_TIME_LIMIT } from "@/lib/constants";
 
@@ -38,11 +38,10 @@ export const useInterview = () => {
         setLoading(true);
         setError(null);
 
-        console.log("Starting session for:", subject, difficulty);
+        console.log("Starting session:", subject, difficulty);
 
-        // Fetch questions from backend
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/questions`,
+          "http://localhost:5000/api/questions",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -71,27 +70,26 @@ export const useInterview = () => {
 
         const sessionId = generateSessionId();
 
-        const newSession: InterviewSession = {
+        const newSession = {
           id: sessionId,
           userId: user.uid,
           subject,
           difficulty,
-          status: "active",
+          status: "active" as const,
           questions,
-          answers: [],
-          feedback: [],
+          answers: [] as Answer[],
+          feedback: [] as SessionFeedback[],
           score: 0,
           duration: 0,
           startedAt: new Date().toISOString(),
         };
 
-        // Save to Firestore
         await setDoc(doc(db, "sessions", sessionId), {
           ...newSession,
           startedAt: serverTimestamp(),
         });
 
-        setSession(newSession);
+        setSession(newSession as any);
         setLoading(false);
 
         console.log("Session created:", sessionId);
@@ -113,10 +111,11 @@ export const useInterview = () => {
       try {
         setLoading(true);
 
-        const currentQuestion = session.questions[currentQuestionIndex];
+        const currentQuestion =
+          session.questions[currentQuestionIndex];
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/interview/feedback`,
+          "http://localhost:5000/api/interview/feedback",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -140,13 +139,13 @@ export const useInterview = () => {
           submittedAt: new Date().toISOString(),
         };
 
-        const updatedSession: InterviewSession = {
+        const updatedSession = {
           ...session,
           answers: [...session.answers, answer],
           feedback: [...session.feedback, feedback],
         };
 
-        setSession(updatedSession);
+        setSession(updatedSession as any);
         setLoading(false);
         nextQuestion();
 
@@ -167,18 +166,20 @@ export const useInterview = () => {
     try {
       const totalScore =
         session.feedback.length > 0
-          ? session.feedback.reduce((sum, f) => sum + f.score, 0) /
-            session.feedback.length
+          ? session.feedback.reduce(
+              (sum: number, f: SessionFeedback) => sum + f.score,
+              0
+            ) / session.feedback.length
           : 0;
 
-      const updatedSession: InterviewSession = {
+      const updatedSession = {
         ...session,
-        status: "completed",
+        status: "completed" as const,
         score: totalScore,
         completedAt: new Date().toISOString(),
       };
 
-      setSession(updatedSession);
+      setSession(updatedSession as any);
       return updatedSession;
     } catch (err: any) {
       setError(err.message);
@@ -189,7 +190,8 @@ export const useInterview = () => {
   return {
     session,
     currentQuestionIndex,
-    currentQuestion: session?.questions[currentQuestionIndex] || null,
+    currentQuestion:
+      session?.questions[currentQuestionIndex] || null,
     isRecording,
     isAISpeaking,
     isLoading,

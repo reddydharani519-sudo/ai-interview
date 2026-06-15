@@ -16,12 +16,9 @@ export default function Home() {
       className="relative min-h-screen overflow-x-hidden"
       style={{ background: "#0d2318" }}
     >
-      {/* Background */}
       <NeuralNetwork />
       <FloatingOrbs />
       <MouseSpotlight />
-
-      {/* Content */}
       <Navbar />
       <HeroSection />
       <StatsSection />

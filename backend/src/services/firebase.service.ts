@@ -12,7 +12,6 @@ if (!admin.apps.length) {
 
 export const db = admin.firestore();
 export const auth = admin.auth();
-
 export const getUserById = async (uid: string) => {
   try {
     const userDoc = await db.collection("users").doc(uid).get();
@@ -25,7 +24,6 @@ export const getUserById = async (uid: string) => {
     return null;
   }
 };
-
 export const updateUserStats = async (
   uid: string,
   stats: any
